@@ -11,6 +11,10 @@ app.get("/", (request: Request, response: Response) => {
   return response.send(`<h1>backend server up at port ${port}</h1>`);
 });
 
+// Route Collection
+
+app.use("/api/auth", require("./routes/auth"));
+
 // App Listner
 app.listen(port, () => {
   console.log(`backend server up at port ${port}`);
