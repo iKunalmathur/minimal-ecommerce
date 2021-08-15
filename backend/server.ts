@@ -14,6 +14,7 @@ app.get("/", (request: Request, response: Response) => {
 // Route Collection
 
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/items", require("./routes/items"));
 
 // App Listner
 app.listen(port, () => {

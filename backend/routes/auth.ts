@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "../config/dotEnvConfig";
 
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
@@ -16,7 +16,7 @@ type User = {
 
 // In App DB
 const Users: User[] = [];
-const JWT_SECRET = "gangadharhishaktimaanhai";
+const JWT_SECRET = `${process.env.JWT_SECRET}`;
 
 // Login
 router.post("/login", async (request: Request, response: Response) => {
@@ -53,7 +53,7 @@ router.post("/login", async (request: Request, response: Response) => {
   if (!user) {
     return response.json({
       status: "error",
-      message: "Invalid credentials / User not found",
+      message: "Invalid credentials / User not found ☹",
     });
   }
 
@@ -64,7 +64,7 @@ router.post("/login", async (request: Request, response: Response) => {
   if (!isMatched) {
     return response.json({
       status: "error",
-      message: "Invalid credentials",
+      message: "Invalid credentials, Nice Try 😅",
     });
   }
 
@@ -83,8 +83,13 @@ router.post("/login", async (request: Request, response: Response) => {
     });
   }
 
+  // Login Success
+
+  console.log("Login Success");
+
   return response.json({
     status: "success",
+    message: "Login Successfull, 😄",
     data: token,
   });
 });
@@ -152,7 +157,7 @@ router.post("/signup", async (request: Request, response: Response) => {
     console.log("Error : ", "User already exists");
     return response.json({
       status: "error",
-      message: "User already exists",
+      message: "User already exists, 😒",
     });
   }
 
@@ -174,6 +179,7 @@ router.post("/signup", async (request: Request, response: Response) => {
 
   response.json({
     status: "success",
+    message: "Sign up Successfull, 😃",
     data: newUser,
   });
 });
