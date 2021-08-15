@@ -1,0 +1,28 @@
+{
+  "name": "mm-ecommerce",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "axios": "^0.21.1",
+    "bootstrap": "^5.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "next": "11.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-hook-form": "^7.12.2"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.4",
+    "@types/react": "17.0.16",
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.0.1",
+    "typescript": "4.3.5"
+  }
+}
