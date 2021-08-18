@@ -3,8 +3,11 @@ import "../config/dotEnvConfig";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const router = express.Router();
+
+const { user: User } = new PrismaClient();
 
 type User = {
   id: number;
@@ -48,7 +51,11 @@ router.post("/login", async (request: Request, response: Response) => {
 
   // Get User From DB
 
-  const user = Users.find((user: any) => user.email === email);
+  const user = await User.findUnique({
+    where: {
+      email,
+    },
+  });
 
   if (!user) {
     return response.json({
@@ -143,7 +150,8 @@ router.post("/signup", async (request: Request, response: Response) => {
   if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(plainTextPassword)) {
     return response.json({
       status: "error",
-      message: "Minimum eight characters, at least one letter and one number",
+      message:
+        "Password should be minimum eight characters, at least one letter and one number",
     });
   }
 
@@ -151,7 +159,11 @@ router.post("/signup", async (request: Request, response: Response) => {
   console.log("Success : ", "Validation Passed");
   // Check if already exists
 
-  const userExists = Users.find((user: any) => user.email === email);
+  const userExists = await User.findUnique({
+    where: {
+      email,
+    },
+  });
 
   if (userExists) {
     console.log("Error : ", "User already exists");
@@ -166,22 +178,45 @@ router.post("/signup", async (request: Request, response: Response) => {
   const id = Math.floor(Math.random() * 10000);
   const password = await bcrypt.hash(plainTextPassword, 10);
 
-  const newUser = {
+  const data = {
     id,
     name,
     email,
     phone,
+    active: true,
     password,
   };
 
-  Users.push(newUser);
-  console.log("Success : ", "New User Created");
+  try {
+    const newUser = await User.create({
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        password: false,
+      },
+    });
 
-  response.json({
-    status: "success",
-    message: "Sign up Successfull, 😃",
-    data: newUser,
-  });
+    console.log("Success : ", "New User Created");
+
+    response.json({
+      status: "success",
+      message: "Sign up Successfull, 😃",
+      data: newUser,
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        response.json({
+          status: "error",
+          message: "Phone Number Already In Use, 😫",
+        });
+      }
+    }
+    throw error;
+  }
 });
 
 module.exports = router;

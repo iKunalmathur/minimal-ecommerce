@@ -2,10 +2,60 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+// Tables Schema
+
+model User {
+  @@map("user")
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(50)
+  email String @unique
+  password String @db.VarChar(255)
+  phone String @unique @db.VarChar(16)
+  active Boolean  @default(false)
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  @@map("item")
+  id Int @id @default(autoincrement())
+  title String @db.VarChar(50)
+  description String @db.VarChar(255)
+  price Float @db.Double
+  image String? @db.VarChar(1000)
+  publish Boolean @default(false)
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  @@map("order")
+  id Int @id @default(autoincrement())
+  userName String @db.VarChar(50)
+  userEmail String 
+  userPhone String @db.VarChar(16)
+  userAddress String @db.VarChar(255)
+  itemTitle String @db.VarChar(255)
+  itemPrice Float @db.Double
+  deliverd Boolean @default(false)
+  user User @relation(fields: [userId], references:[id])
+  userId Int
+  item Item @relation(fields: [itemId], references:[id])
+  itemId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

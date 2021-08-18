@@ -12,9 +12,11 @@ app.get("/", (request: Request, response: Response) => {
 });
 
 // Route Collection
+app.use("/api/seed", require("./routes/seed"));
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/items", require("./routes/items"));
+app.use("/api/orders", require("./routes/order"));
 
 // App Listner
 app.listen(port, () => {

@@ -1,33 +1,36 @@
+import { PrismaClient } from "@prisma/client";
 import express, { Request, request, Response, response } from "express";
 
 const router = express.Router();
 
+const { item: Item } = new PrismaClient();
+
 // Server DB
-const Items = [
+const dummyItems = [
   {
     id: 1,
-    name: "product name 1",
+    title: "product title 1",
     description: "product description",
     price: 99.99,
     image: "/products/1.jpg",
   },
   {
     id: 2,
-    name: "product name 2",
+    title: "product title 2",
     description: "product description",
     price: 99.99,
     image: "/products/2.jpg",
   },
   {
     id: 3,
-    name: "product name 3",
+    title: "product title 3",
     description: "product description",
     price: 99.99,
     image: "/products/3.jpg",
   },
   {
     id: 4,
-    name: "product name 4",
+    title: "product title 4",
     description: "product description",
     price: 99.99,
     image: "/products/4.jpg",
@@ -35,8 +38,17 @@ const Items = [
 ];
 
 // Send All Items
-router.get("/", (request: Request, response: Response) => {
-  return response.json(Items);
+router.get("/", async (request: Request, response: Response) => {
+  const items: Object[] = await Item.findMany({
+    where: {
+      publish: true,
+    },
+  });
+
+  if (items.length === 0) {
+    return response.json(dummyItems);
+  }
+  response.json(items);
 });
 
 module.exports = router;
