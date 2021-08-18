@@ -1,11 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getData } from "../../services/handleApi";
+import axios from "axios";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  request: NextApiRequest,
+  response: NextApiResponse
 ) {
-  const path = "/orders";
-  const data = await getData(path);
-  res.status(200).json(data);
+  if (request.method === "POST") {
+    // Process a POST request
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
+        request.body
+      );
+      return response.json(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    // Handle any other HTTP method
+    return response.status(404).send("404 Page not found");
+  }
 }

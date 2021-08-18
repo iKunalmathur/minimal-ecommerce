@@ -1,12 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
-import { GetStaticProps } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Layout from "../Components/Layout";
-import { server } from "../config";
-import { postData } from "../services/handleApi";
 import { AuthContext, CartContext } from "./_app";
 
 type Inputs = {
@@ -23,6 +20,7 @@ interface CartProps {
 
 export default function cart({ setCartContext }: CartProps) {
   const auth = useContext(AuthContext);
+
   const cartItems = useContext(CartContext);
   const router = useRouter();
 
@@ -37,8 +35,8 @@ export default function cart({ setCartContext }: CartProps) {
   } = useForm();
 
   // Handle Form Submit
-  const onSubmit: SubmitHandler<Inputs> = async (customer) => {
-    customer.id = 19;
+  const onSubmit: SubmitHandler<Inputs> = async (user) => {
+    user.id = auth.identifier;
 
     // create order for each items
 
@@ -46,18 +44,33 @@ export default function cart({ setCartContext }: CartProps) {
 
     cartItems.forEach((i: any) => {
       orders.push({
-        customerId: customer.id,
-        customerName: customer.name,
-        customerEmail: customer.email,
-        customerPhone: customer.phone,
-        customerAddress: customer.address,
-        itemName: i.name,
+        userId: user.id,
+        userName: user.name,
+        userEmail: user.email,
+        userPhone: user.phone,
+        userAddress: user.address,
+        itemTitle: i.title,
         itemPrice: i.price,
         itemId: i.id,
       });
     });
 
     console.log("Orders : ", orders);
+
+    try {
+      const res = await axios.post("/api/orders", orders);
+      if (res.data.status === "error") {
+        alert(res.data.message);
+        return;
+      }
+      // success
+      alert(res.data.message);
+      console.log(res);
+      // set cart to empty
+      setCartContext([]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   function removeCartItem(id: number) {
@@ -65,11 +78,6 @@ export default function cart({ setCartContext }: CartProps) {
   }
 
   useEffect(() => {
-    if (!auth) {
-      router.push("/login");
-      return;
-    }
-
     setTotalPrice(
       cartItems.reduce((sum: number, i: any) => {
         return Math.round(sum + i.price);
@@ -101,7 +109,7 @@ export default function cart({ setCartContext }: CartProps) {
                       key={index}
                     >
                       <div>
-                        <h6 className="my-0">{i.name}</h6>
+                        <h6 className="my-0">{i.title}</h6>
                         <a
                           href="#"
                           onClick={(e) => {

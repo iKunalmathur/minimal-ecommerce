@@ -32,9 +32,6 @@ interface HomeProps {
 
 export default function Home({ items, setCartContext }: HomeProps) {
   const auth = useContext(AuthContext);
-  const router = useRouter();
-
-  console.log("auth", auth);
 
   function addItemToCart(item: object) {
     if (!auth) {
@@ -62,7 +59,7 @@ export default function Home({ items, setCartContext }: HomeProps) {
                     style={{ height: "250px" }}
                   />
                   <div className="card-body">
-                    <h5 className="card-text">{i.name}</h5>
+                    <h5 className="card-text">{i.title}</h5>
                     <p className="card-text text-muted">{i.description}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">

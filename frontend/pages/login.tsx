@@ -28,28 +28,27 @@ export default function login({ setAuthContext }: LoginProps) {
 
   // Handle Form Submit
   const formSubmit: SubmitHandler<FromInputs> = async (formData) => {
-    await axios
-      .post("/api/login", formData)
-      .then((res) => {
-        if (res.data.status === "error") {
-          alert(res.data.message);
-          return;
-        }
-        alert(res.data.message);
-        localStorage.setItem("token", res.data.data);
-        const token: any = localStorage.getItem("token");
+    try {
+      const res = await axios.post("/api/login", formData);
 
-        try {
-          // verify user
-          const user = verify(token, JWT_SECRET);
-          // set Auth
-          setAuthContext(user);
-          router.push("/");
-        } catch (error) {
-          console.log("Catch Error : ", error);
-        }
-      })
-      .catch((err) => console.log(err));
+      if (res.data.status === "error") {
+        alert(res.data.message);
+        return;
+      }
+
+      alert(res.data.message);
+
+      localStorage.setItem("token", res.data.data);
+
+      const token: any = localStorage.getItem("token");
+      // verify user
+      const user = verify(token, JWT_SECRET);
+      // set Auth
+      setAuthContext(user);
+      router.push("/");
+    } catch (error) {
+      console.log("Catch Error : ", error);
+    }
   };
   return (
     <div className="text-center form-center" style={{ minHeight: "100vh" }}>
