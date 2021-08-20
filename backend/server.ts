@@ -17,6 +17,7 @@ app.use("/api/seed", require("./routes/seed"));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/items", require("./routes/items"));
 app.use("/api/orders", require("./routes/order"));
+app.use("/api/user", require("./routes/user"));
 
 // App Listner
 app.listen(port, () => {

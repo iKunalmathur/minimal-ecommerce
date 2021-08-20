@@ -51,7 +51,7 @@ router.post("/login", async (request: Request, response: Response) => {
 
   // Get User From DB
 
-  const user = await User.findUnique({
+  const user: any = await User.findUnique({
     where: {
       email,
     },
@@ -77,16 +77,16 @@ router.post("/login", async (request: Request, response: Response) => {
 
   const token = sign(
     {
-      identifier: user.id,
-      name: user.name,
+      id: user.id,
     },
-    JWT_SECRET
+    JWT_SECRET,
+    { expiresIn: 360 }
   );
 
   if (!token) {
     return response.json({
       status: "error",
-      message: "Internal seriver error",
+      message: "Internal server error",
     });
   }
 
@@ -97,7 +97,13 @@ router.post("/login", async (request: Request, response: Response) => {
   return response.json({
     status: "success",
     message: "Login Successfull, 😄",
-    data: token,
+    data: {
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+    },
   });
 });
 

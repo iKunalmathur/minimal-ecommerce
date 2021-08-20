@@ -1,9 +1,27 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
+import checkAuth from "../middleware/checkAuth";
 
 const router = express.Router();
 
 const { order: Order } = new PrismaClient();
+
+// Get all users orders
+router.get("/", checkAuth, async (request: any, response: Response) => {
+  const { user: userId } = request;
+
+  const userData = await Order.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      user: true,
+      item: true,
+    },
+  });
+
+  return response.json(userData);
+});
 
 // Create Orders
 router.post("/", async (request: Request, response: Response) => {
