@@ -2,5 +2,9 @@
 
 - User Authentication with JWT & Bcrypt.
 - MySQL + Prisma ORM.
-- Express for backend.
-- Next JS for frontend.
+- Node JS + Express for backend.
+- Next JS + Bootstrap 5 for frontend.
+
+## Getting Started
+
+Clone Repo and follow setup guide of each application.
