@@ -1,10 +1,57 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import axios from "axios";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
 import Layout from "../Components/Layout";
 
-export default function profile() {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  let user: any = {};
+
+  try {
+    const res2 = await axios.get(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/user`,
+      {
+        params: {
+          token,
+        },
+      }
+    );
+
+    user = res2.data;
+
+    console.log(user);
+
+    if (user.status === "error") {
+      return {
+        notFound: true,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default function profile({ user }: any) {
   return (
     <Layout>
-      <div className="container vh-100">
+      <div className="container vh-100 mt-5 pt-5">
         <main>
           <div className="py-5 text-left">
             {/* <img className="d-block mx-auto mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> */}
@@ -15,7 +62,7 @@ export default function profile() {
           <div className="row g-5">
             <div className="col-md-5 col-lg-4 order-md-first">
               <h4 className="d-flex justify-content-between align-items-center mb-3">
-                <span className="text-primary">John Doe</span>
+                <span className="text-primary">{user.name}</span>
                 <div>
                   <Link href="/orders">
                     <a className="btn btn-primary btn-sm rounded-pill">
@@ -28,13 +75,13 @@ export default function profile() {
                 <li className="list-group-item d-flex justify-content-between lh-sm">
                   <div>
                     <h6 className="my-0">Email</h6>
-                    <small className="text-muted">you@example.com</small>
+                    <small className="text-muted">{user.email}</small>
                   </div>
                 </li>
                 <li className="list-group-item d-flex justify-content-between lh-sm">
                   <div>
                     <h6 className="my-0">Phone no</h6>
-                    <small className="text-muted">+91 98XXXXXXXX</small>
+                    <small className="text-muted">{user.phone}</small>
                   </div>
                 </li>
                 <li className="list-group-item d-flex justify-content-between lh-sm">

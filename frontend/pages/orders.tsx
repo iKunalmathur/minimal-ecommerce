@@ -1,16 +1,43 @@
 /* eslint-disable @next/next/no-img-element */
 import axios from "axios";
-import { GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import Layout from "../Components/Layout";
-import { server } from "../config";
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const orders: Object[] = [];
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { token } = req.cookies;
 
-  if (!orders) {
+  if (!token) {
     return {
-      notFound: true,
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
     };
+  }
+
+  let orders: any = [];
+
+  try {
+    const res2 = await axios.get(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/orders`,
+      {
+        params: {
+          token,
+        },
+      }
+    );
+
+    orders = res2.data;
+
+    console.log(orders);
+
+    if (orders.status === "error") {
+      return {
+        notFound: true,
+      };
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return {
@@ -29,25 +56,26 @@ export default function orders({ orders }: OrdersProps) {
     <Layout>
       <br />
       <div className="container vh-100 pt-5 mt-5">
-        <div className="list-group">
-          {orders &&
-            orders.map((o: any, index: number) => (
+        {orders.length ? (
+          <div className="list-group">
+            {orders.map((o: any, index: number) => (
               <div
                 className="list-group-item list-group-item-action d-flex gap-3 py-3"
                 aria-current="true"
                 key={index}
               >
                 <img
-                  src="https://github.com/twbs.png"
+                  src={o.item.image}
                   alt="twbs"
                   width="32"
                   height="32"
                   className="rounded-circle flex-shrink-0"
+                  style={{ objectFit: "cover" }}
                 />
                 <div className="d-flex gap-2 w-100 justify-content-between">
                   <div>
-                    <h6 className="mb-0">{o.product.name}</h6>
-                    <p className="mb-0 opacity-75">{o.product.description}</p>
+                    <h6 className="mb-0">{o.item.title}</h6>
+                    <p className="mb-0 opacity-75">{o.item.description}</p>
                     <div className="d-flex gap-2">
                       <p className="fw-normal">
                         <span className="text-primary fw-bold">Order on:</span>{" "}
@@ -55,12 +83,12 @@ export default function orders({ orders }: OrdersProps) {
                       </p>
                       <p className="fw-normal">
                         <span className="text-primary fw-bold">Price:</span> $
-                        {o.price}/-
+                        {o.itemPrice}/-
                       </p>
                       <p className="fw-normal">
                         <span className="text-primary fw-bold">
                           Payment Method:
-                        </span>{" "}
+                        </span>
                         POD
                       </p>
                     </div>
@@ -71,7 +99,12 @@ export default function orders({ orders }: OrdersProps) {
                 </div>
               </div>
             ))}
-        </div>
+          </div>
+        ) : (
+          <div className="grid-center h-100 text-muted">
+            <h1> No order found !! </h1>
+          </div>
+        )}
       </div>
     </Layout>
   );

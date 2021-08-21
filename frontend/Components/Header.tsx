@@ -1,16 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
 import Link from "next/link";
-import { useContext, useState } from "react";
-import { AuthContext, CartContext } from "../pages/_app";
+import { useContext } from "react";
+import { CartContext } from "../pages/_app";
+import { useAuth } from "../services/useAuth";
 
 interface HeaderProps {
   setAuthContext?: Function;
 }
 
-export default function Header({ setAuthContext }: HeaderProps) {
-  const auth = useContext(AuthContext);
+export default function Header({}: HeaderProps) {
   const cartItemCount = useContext(CartContext).length;
+  const { user: auth } = useAuth();
 
   return (
     <>
@@ -46,13 +47,13 @@ export default function Header({ setAuthContext }: HeaderProps) {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              {/* <li className="nav-item">
+              <li className="nav-item">
                 <Link href="/">
                   <a className="nav-link active" aria-current="page">
                     Home
                   </a>
                 </Link>
-              </li> */}
+              </li>
             </ul>
             <div className="d-flex gap-2">
               {auth ? (

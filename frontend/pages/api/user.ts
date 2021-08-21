@@ -7,23 +7,12 @@ export default async function handler(
 ) {
   const { token } = request.query;
 
-  if (request.method === "POST") {
-    // Process a POST request
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
-        request.body
-      );
-      return response.json(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  } else if (request.method === "GET") {
+  if (request.method === "GET") {
     // Process a GET request
 
     let config: Object = {
       method: "get",
-      url: `${process.env.NEXT_PUBLIC_API_URL}/orders`,
+      url: `${process.env.NEXT_PUBLIC_API_URL}/user`,
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
@@ -38,7 +27,7 @@ export default async function handler(
       return response.json(res.data);
     } catch (error) {
       console.log(error);
-      return response.json({ status: "error", message: "No order found" });
+      return response.json({ status: "error", message: "No user found" });
     }
   } else {
     // Handle any other HTTP method

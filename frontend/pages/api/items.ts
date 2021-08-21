@@ -21,14 +21,13 @@ export default async function handler(
   response: NextApiResponse
 ) {
   if (request.method === "GET") {
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/items`)
-      .then((res) => {
-        return response.json(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/items`);
+      return response.json(res.data);
+    } catch (error) {
+      console.log(error);
+      return response.json({ status: "error", message: "No product found" });
+    }
   } else {
     // Handle any other HTTP method
     return response.status(404).send("404 Page not found");

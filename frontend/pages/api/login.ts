@@ -1,6 +1,5 @@
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getData, postData } from "../../services/handleApi";
 
 export default async function handler(
   request: NextApiRequest,

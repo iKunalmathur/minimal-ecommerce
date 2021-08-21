@@ -4,18 +4,20 @@ import { GetStaticProps } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useContext } from "react";
 import Layout from "../Components/Layout";
-import { AuthContext } from "./_app";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const items: Object[] = await axios
-    .get(`${process.env.NEXT_PUBLIC_APP_URL}/api/items`)
-    .then((res) => res.data)
-    .catch((err) => console.log(err));
+  let items: Object[] = [];
 
-  if (!items) {
-    return {
-      notFound: true,
-    };
+  try {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/api/items`);
+    items = res.data;
+    if (!items) {
+      return {
+        notFound: true,
+      };
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return {
@@ -31,14 +33,11 @@ interface HomeProps {
 }
 
 export default function Home({ items, setCartContext }: HomeProps) {
-  const auth = useContext(AuthContext);
-
   function addItemToCart(item: object) {
-    if (!auth) {
-      // router.push("/login");
-      alert("Login required, 😐");
-      return;
-    }
+    // if (!auth) {
+    //   alert("Login required, 😐");
+    //   return;
+    // }
     setCartContext((items: any) => [...items, item]);
     console.log("Item added to cart");
   }
@@ -49,7 +48,7 @@ export default function Home({ items, setCartContext }: HomeProps) {
       <br />
       <div className="container mt-5 pt-5">
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 ">
-          {items &&
+          {items.length &&
             items.map((i: any, index) => (
               <div className="col" key={index}>
                 <div className="card shadow-sm p-3">

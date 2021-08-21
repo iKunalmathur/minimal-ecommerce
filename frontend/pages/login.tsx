@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
-import axios from "axios";
-import { verify } from "jsonwebtoken";
 import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../services/useAuth";
 
 type FromInputs = {
   email: string;
@@ -15,9 +14,9 @@ interface LoginProps {
   setAuthContext: Function;
 }
 
-const JWT_SECRET = `${process.env.NEXT_PUBLIC_JWT_SECRET}`;
-
-export default function login({ setAuthContext }: LoginProps) {
+export default function login() {
+  // Using Auth Hook
+  const { login } = useAuth();
   const router = useRouter();
 
   const {
@@ -28,24 +27,24 @@ export default function login({ setAuthContext }: LoginProps) {
 
   // Handle Form Submit
   const formSubmit: SubmitHandler<FromInputs> = async (formData) => {
-    try {
-      const res = await axios.post("/api/login", formData);
+    const { email, password } = formData;
 
-      if (res.data.status === "error") {
-        alert(res.data.message);
+    try {
+      const res = await login(email, password);
+
+      if (res.status) {
+        alert(res.message);
+
+        if (res.status === "success") {
+          router.push("/");
+          return;
+        }
+
         return;
       }
 
-      alert(res.data.message);
-
-      localStorage.setItem("token", res.data.data);
-
-      const token: any = localStorage.getItem("token");
-      // verify user
-      const user = verify(token, JWT_SECRET);
-      // set Auth
-      setAuthContext(user);
-      router.push("/");
+      // Service out of order
+      alert("Service out of order");
     } catch (error) {
       console.log("Catch Error : ", error);
     }
