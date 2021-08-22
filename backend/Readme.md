@@ -32,4 +32,4 @@ npx prisma migrate dev --name init
 npm run dev
 ```
 
-Open [http://localhost:5500](http://localhost:5555) with your browser to see the result.
+Open [http://localhost:5555](http://localhost:5555) with your browser to see the result.

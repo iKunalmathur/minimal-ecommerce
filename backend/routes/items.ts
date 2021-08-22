@@ -51,4 +51,16 @@ router.get("/", async (request: Request, response: Response) => {
   response.json(items);
 });
 
+router.get("/:id", async (request: Request, response: Response) => {
+  const { id } = request.params;
+
+  const item: any = await Item.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  response.json(item);
+});
+
 module.exports = router;

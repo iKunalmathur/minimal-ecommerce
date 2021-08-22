@@ -8,6 +8,7 @@ const { order: Order } = new PrismaClient();
 
 // Get all users orders
 router.get("/", checkAuth, async (request: any, response: Response) => {
+  console.log("/order:get accessed");
   const { user: userId } = request;
 
   const userData = await Order.findMany({
@@ -24,8 +25,12 @@ router.get("/", checkAuth, async (request: any, response: Response) => {
 });
 
 // Create Orders
-router.post("/", async (request: Request, response: Response) => {
+router.post("/", checkAuth, async (request: Request, response: Response) => {
+  console.log("/order:post accessed");
+
   const data = request.body;
+
+  console.log(data);
 
   if (!data || data.length === 0) {
     return response.json({

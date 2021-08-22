@@ -74,7 +74,7 @@ router.get("/items", async (request: Request, response: Response) => {
       title: "Gigabyte AERO 15S OLED KB Thin+Light High Performa",
       description:
         "4K UHD OLED Display, GeForce RTX 2060, i7-10875H, 16GB DDR4, 512GB NVMe SSD, 8.5hrs Battery Life(AERO 15S OLED KB-8US5130SP)",
-      image: "/products/1.jpg",
+      image: "/items/1.jpg",
       publish: true,
       price: 2199.99,
     },
@@ -82,15 +82,15 @@ router.get("/items", async (request: Request, response: Response) => {
       title: "ASUS ROG Strix G17 (2021) Gaming Laptop",
       description:
         "17.3” 300Hz IPS Type FHD, NVIDIA GeForce RTX 3070, AMD Ryzen 9 5900HX, 16GB DDR4, 1TB PCIe NVMe SSD, RGB Keyboard, Windows 10, G713QR-ES96",
-      image: "/products/2.jpg",
+      image: "/items/2.jpg",
       publish: true,
       price: 2021.73,
     },
     {
-      title: "New Dell XPS 17 9700 17 inch UHD Plus Laptop (Silv",
+      title: "New Dell XPS 17 9700 17 inch UHD Plus Laptop.",
       description:
         "Intel i9-10885H 10th Gen, 32GB DDR4 RAM, 1TB SSD, NVIDIA GeForce RTX 2060 6GB GDDR6, Windows 10 Home, 17-30.99 inches",
-      image: "/products/3.jpg",
+      image: "/items/3.jpg",
       publish: true,
       price: 2779.98,
     },
@@ -98,9 +98,17 @@ router.get("/items", async (request: Request, response: Response) => {
       title: "2021 Apple MacBook Pro",
       description:
         "Apple M1 Chip (13-inch, 8GB RAM, 256GB SSD Storage) - Space Gray",
-      image: "/products/4.jpg",
+      image: "/items/4.jpg",
       publish: true,
       price: 2999.99,
+    },
+    {
+      title: "Razer Blade 15 RTX",
+      description:
+        "World's Smallest 15.6 Gaming Laptop (144Hz Full HD Thin Bezel, 8th Gen Intel Core i7-8750H 6 Core, NVIDIA GeForce RTX 2080 Max-Q, 16GB RAM, 512GB SSD, Windows 10, CNC Aluminum)",
+      image: "/items/5.jpg",
+      publish: true,
+      price: 2569.98,
     },
   ];
 
