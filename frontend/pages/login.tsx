@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -13,6 +14,23 @@ type FromInputs = {
 interface LoginProps {
   setAuthContext: Function;
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { token } = req.cookies;
+
+  if (token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 export default function login() {
   // Using Auth Hook
@@ -56,12 +74,9 @@ export default function login() {
           <div className="modal-header p-5 pb-4 border-bottom-0">
             {/* <!-- <h5 className="modal-title">Modal title</h5> --> */}
             <h2 className="fw-bold mb-0">Login for Access</h2>
-            <button
-              type="button"
-              className="btn-close disabled"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <Link href="/">
+              <a className="btn btn-close"></a>
+            </Link>
           </div>
 
           <div className="modal-body p-5 pt-0">
@@ -72,7 +87,7 @@ export default function login() {
                   className="form-control rounded-4"
                   id="floatingInput"
                   placeholder="name@example.com"
-                  defaultValue="janedoe1@example.com"
+                  defaultValue="janedoe01@example.com"
                   {...register("email", { required: true })}
                 />
                 {errors.email?.type === "required" && (
@@ -84,7 +99,7 @@ export default function login() {
               </div>
               <div className="form-floating mb-3">
                 <input
-                  type="text"
+                  type="password"
                   className="form-control rounded-4"
                   id="floatingPassword"
                   placeholder="Password"
@@ -113,7 +128,7 @@ export default function login() {
                   <a>Create New</a>
                 </Link>
               </small>
-              <hr className="my-4" />
+              {/* <hr className="my-4" />
               <h2 className="fs-5 fw-bold mb-3">Or use a third-party</h2>
               <button
                 className="w-100 py-2 mb-2 btn btn-outline-dark rounded-4"
@@ -121,7 +136,7 @@ export default function login() {
               >
                 <i className="fab fa-twitter" aria-hidden="true"></i> Login with
                 Twitter
-              </button>
+              </button> */}
             </form>
           </div>
         </div>

@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import axios from "axios";
 import { GetStaticProps } from "next";
-import { useRouter } from "next/dist/client/router";
-import { useContext } from "react";
+import Link from "next/link";
 import Layout from "../Components/Layout";
+import UserContext from "../context/UserContext";
+import { useAuth } from "../services/useAuth";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   let items: Object[] = [];
@@ -33,11 +34,12 @@ interface HomeProps {
 }
 
 export default function Home({ items, setCartContext }: HomeProps) {
+  const { user } = useAuth();
   function addItemToCart(item: object) {
-    // if (!auth) {
-    //   alert("Login required, 😐");
-    //   return;
-    // }
+    if (!user) {
+      alert("You must login before adding item to cart.");
+      return;
+    }
     setCartContext((items: any) => [...items, item]);
     console.log("Item added to cart");
   }
@@ -62,6 +64,9 @@ export default function Home({ items, setCartContext }: HomeProps) {
                     <p className="card-text text-muted">{i.description}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">
+                        <Link href={`/items/${encodeURIComponent(i.id)}`}>
+                          <a className="btn btn-sm btn-primary">View Product</a>
+                        </Link>
                         <button
                           type="button"
                           className="btn btn-sm btn-outline-primary"

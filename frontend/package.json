@@ -12,6 +12,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "axios": "^0.21.1",
     "bootstrap": "^5.1.0",
+    "date-fns": "^2.23.0",
     "js-cookie": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "next": "11.0.1",

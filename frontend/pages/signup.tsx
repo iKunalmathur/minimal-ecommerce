@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -8,6 +9,23 @@ import { SubmitHandler, useForm } from "react-hook-form";
 interface SignupProps {
   setAuth: Function;
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { token } = req.cookies;
+
+  if (token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 export default function signup({ setAuth }: SignupProps) {
   const router = useRouter();
@@ -95,7 +113,7 @@ export default function signup({ setAuth }: SignupProps) {
                             type="email"
                             id="form3Example3c"
                             className="form-control"
-                            defaultValue="janedoe1@example.com"
+                            defaultValue="janedoe01@example.com"
                             {...register("email", {
                               required: true,
                             })}
@@ -144,7 +162,7 @@ export default function signup({ setAuth }: SignupProps) {
                         <i className="fas fa-lock fa-lg me-3 fa-fw"></i>
                         <div className="form-outline flex-fill mb-0">
                           <input
-                            type="text"
+                            type="password"
                             id="form3Example4c"
                             className="form-control"
                             defaultValue="password01"

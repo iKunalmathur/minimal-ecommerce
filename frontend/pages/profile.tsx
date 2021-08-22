@@ -31,12 +31,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     user = res2.data;
 
     console.log(user);
-
-    if (user.status === "error") {
-      return {
-        notFound: true,
-      };
-    }
   } catch (error) {
     console.log(error);
   }

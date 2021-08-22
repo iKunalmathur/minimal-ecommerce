@@ -21,9 +21,6 @@ export default async function handler(
 
     try {
       const res = await axios(config);
-
-      console.log(res.data);
-
       return response.json(res.data);
     } catch (error) {
       console.log(error);

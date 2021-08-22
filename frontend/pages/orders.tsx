@@ -2,6 +2,7 @@
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import Layout from "../Components/Layout";
+import { format } from "date-fns";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const { token } = req.cookies;
@@ -28,14 +29,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     );
 
     orders = res2.data;
-
-    console.log(orders);
-
-    if (orders.status === "error") {
-      return {
-        notFound: true,
-      };
-    }
   } catch (error) {
     console.log(error);
   }
@@ -74,21 +67,21 @@ export default function orders({ orders }: OrdersProps) {
                 />
                 <div className="d-flex gap-2 w-100 justify-content-between">
                   <div>
-                    <h6 className="mb-0">{o.item.title}</h6>
-                    <p className="mb-0 opacity-75">{o.item.description}</p>
-                    <div className="d-flex gap-2">
+                    <h6 className="">{o.item.title}</h6>
+                    <p className="opacity-75">{o.item.description}</p>
+                    <div className="d-grid">
                       <p className="fw-normal">
-                        <span className="text-primary fw-bold">Order on:</span>{" "}
-                        {o.createdAt}
+                        <span className="text-primary fw-bold">Order on :</span>{" "}
+                        {format(new Date(o.createdAt), "dd-MM-yyyy")}
                       </p>
                       <p className="fw-normal">
-                        <span className="text-primary fw-bold">Price:</span> $
+                        <span className="text-primary fw-bold">Price :</span> $
                         {o.itemPrice}/-
                       </p>
                       <p className="fw-normal">
                         <span className="text-primary fw-bold">
-                          Payment Method:
-                        </span>
+                          Payment Method :
+                        </span>{" "}
                         POD
                       </p>
                     </div>

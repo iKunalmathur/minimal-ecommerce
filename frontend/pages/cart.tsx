@@ -1,10 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
+import Cookies from "js-cookie";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Layout from "../Components/Layout";
-import { AuthContext, CartContext } from "./_app";
+import { useAuth } from "../services/useAuth";
+import { CartContext } from "./_app";
 
 type Inputs = {
   id: number;
@@ -16,16 +19,51 @@ type Inputs = {
 
 interface CartProps {
   setCartContext: Function;
+  user: any;
 }
 
-export default function cart({ setCartContext }: CartProps) {
-  const auth = useContext(AuthContext);
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const { token } = req.cookies;
 
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  let user: any = {};
+
+  try {
+    const res2 = await axios.get(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/user`,
+      {
+        params: {
+          token,
+        },
+      }
+    );
+
+    user = res2.data;
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default function cart({ setCartContext, user }: CartProps) {
   const cartItems = useContext(CartContext);
   const router = useRouter();
-
+  const token = Cookies.get("token");
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [quntity, setQuntity] = useState<number>(0);
+  const [quntity, setQuntity] = useState<number>(cartItems.length);
   const [orderPlaced, setOrderPlaced] = useState(false);
 
   const {
@@ -35,9 +73,7 @@ export default function cart({ setCartContext }: CartProps) {
   } = useForm();
 
   // Handle Form Submit
-  const onSubmit: SubmitHandler<Inputs> = async (user) => {
-    user.id = auth.identifier;
-
+  const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     // create order for each items
 
     let orders: Object[] = [];
@@ -47,25 +83,32 @@ export default function cart({ setCartContext }: CartProps) {
         userId: user.id,
         userName: user.name,
         userEmail: user.email,
-        userPhone: user.phone,
-        userAddress: user.address,
+        userPhone: formData.phone,
+        userAddress: formData.address,
         itemTitle: i.title,
         itemPrice: i.price,
         itemId: i.id,
       });
     });
 
-    console.log("Orders : ", orders);
+    let config: Object = {
+      method: "post",
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/api/orders`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: orders,
+    };
 
     try {
-      const res = await axios.post("/api/orders", orders);
+      const res = await axios(config);
       if (res.data.status === "error") {
         alert(res.data.message);
         return;
       }
       // success
       alert(res.data.message);
-      console.log(res);
       // set cart to empty
       setCartContext([]);
     } catch (error) {
@@ -74,7 +117,9 @@ export default function cart({ setCartContext }: CartProps) {
   };
 
   function removeCartItem(id: number) {
-    setCartContext(cartItems.filter((item: any) => item.id !== id));
+    const changedCart = cartItems.filter((item: any) => item.id !== id);
+    setCartContext(changedCart);
+    setQuntity(changedCart.length);
   }
 
   useEffect(() => {
@@ -83,7 +128,7 @@ export default function cart({ setCartContext }: CartProps) {
         return Math.round(sum + i.price);
       }, 0)
     );
-  }, [cartItems, auth, router]);
+  }, [cartItems, router, user]);
 
   return (
     <Layout>
@@ -147,7 +192,8 @@ export default function cart({ setCartContext }: CartProps) {
                       id="address"
                       placeholder=""
                       required
-                      defaultValue={"John Doe"}
+                      readOnly
+                      value={user.name}
                       {...register("name", { required: true })}
                     />
                     {errors.name?.type === "required" &&
@@ -167,7 +213,7 @@ export default function cart({ setCartContext }: CartProps) {
                       id="phone"
                       placeholder="+91 98XXXXXXXX"
                       required
-                      defaultValue={"+91 9876543210"}
+                      value={user.phone}
                       {...register("phone", { required: true })}
                     />
                     <div className="invalid-feedback">
@@ -185,7 +231,8 @@ export default function cart({ setCartContext }: CartProps) {
                       id="email"
                       required
                       placeholder="you@example.com"
-                      defaultValue={"johndoe@example.com"}
+                      readOnly
+                      value={user.email}
                       {...register("email", { required: true })}
                     />
                     <div className="invalid-feedback">
@@ -203,7 +250,7 @@ export default function cart({ setCartContext }: CartProps) {
                       id="address"
                       placeholder="1234 Main St"
                       required
-                      defaultValue={"1234 Main test St"}
+                      value={user.address}
                       {...register("address", { required: true })}
                     />
                     <div className="invalid-feedback">

@@ -1,24 +1,30 @@
 import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 
-export default async function handler(
-  request: NextApiRequest,
-  response: NextApiResponse
-) {
-  const { token } = request.query;
-
+export default async function handler(request: any, response: NextApiResponse) {
   if (request.method === "POST") {
+    const token = request.cookies.token;
+    console.log(token);
     // Process a POST request
+
+    let config: Object = {
+      method: "post",
+      url: `${process.env.NEXT_PUBLIC_API_URL}/orders`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      data: request.body,
+    };
+
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
-        request.body
-      );
+      const res = await axios(config);
       return response.json(res.data);
     } catch (error) {
       console.error(error);
     }
   } else if (request.method === "GET") {
+    const { token } = request.query;
     // Process a GET request
 
     let config: Object = {
@@ -32,9 +38,6 @@ export default async function handler(
 
     try {
       const res = await axios(config);
-
-      console.log(res.data);
-
       return response.json(res.data);
     } catch (error) {
       console.log(error);

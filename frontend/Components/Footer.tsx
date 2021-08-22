@@ -9,7 +9,7 @@ export default function Footer() {
           href="/"
           className="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
         >
-          <img width="40px" height="40px" src="/favicon.ico" alt="" />
+          <img width="40px" height="40px" src="/favicon.png" alt="" />
         </a>
 
         <ul className="nav col-md-4 justify-content-end">
